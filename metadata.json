@@ -1,0 +1,6 @@
+{
+  "name": "TN-001",
+  "description": "Máy tính khoa học chuyên nghiệp TN-001: Math Box, Spreadsheet, QR Code, Atomic Table, Equation, Vector, Matrix, Statistics & Natural Display.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

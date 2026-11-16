@@ -1,0 +1,6 @@
+{
+  "summary":  "Kế hoạch thiết kế Bong bóng chú thích nhỏ gọn (Compact Tooltip Bubble) và hỗ trợ chạm trực tiếp để chuyển bước:\n- Thay thế thẻ lớn che khuất nút bằng bong bóng chú thích siêu gọn (Compact Tooltip) tự động neo ngay trên hoặc dưới cụm phím đang spotlight.\n- Có mũi tên chỉ hướng (▲ hoặc ▼) trỏ thẳng vào tâm của cụm phím mục tiêu.\n- Rút gọn nội dung cô đọng, súc tích (1-2 câu quan trọng nhất).\n- Cho phép người dùng chạm trực tiếp vào vùng sáng hoặc chạm bất kỳ đâu trên màn hình để chuyển ngay sang bước tiếp theo.",
+  "updatedAt":  "2026-11-09T13:21:53.392032174Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}
