@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TN-001 Calculator – Máy tính khoa học đa năng cho Android</title>
+  <meta name="description" content="TN-001 Calculator – ứng dụng máy tính khoa học đa năng miễn phí cho Android. Giải phương trình, vẽ đồ thị, ma trận, thống kê, đổi đơn vị và nhiều hơn nữa.">
+  <meta name="keywords" content="máy tính khoa học, calculator, android, TN-001, giải phương trình, vẽ đồ thị, ma trận">
+  <meta name="author" content="TN Developer">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="TN-001 Calculator – Máy tính khoa học đa năng">
+  <meta property="og:description" content="Ứng dụng máy tính khoa học miễn phí cho Android. Giải phương trình, vẽ đồ thị, ma trận, thống kê và nhiều hơn nữa.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nguyenshack.github.io/tn-calculator-app/">
+  <meta property="og:image" content="https://nguyenshack.github.io/tn-calculator-app/og-image.png">
+
+  <!-- Favicon (inline SVG as data URI) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23102a43'/><text x='32' y='40' text-anchor='middle' font-family='Arial,sans-serif' font-weight='bold' font-size='24' fill='%2338bdf8'>TN</text></svg>">
+
+  <style>
+    /* ===== CSS Reset & Variables ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy-900: #0a1929;
+      --navy-800: #102a43;
+      --navy-700: #1a3a5c;
+      --navy-600: #234e72;
+      --blue-500: #2196f3;
+      --blue-400: #42a5f5;
+      --blue-300: #64b5f6;
+      --cyan-400: #38bdf8;
+      --cyan-300: #67e8f9;
+
+      /* Light mode defaults */
+      --bg-primary: #f0f4f8;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --bg-hero: linear-gradient(135deg, #102a43 0%, #1a3a5c 50%, #234e72 100%);
+      --text-primary: #1a2332;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 14px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+      --card-hover-shadow: 0 8px 25px rgba(33,150,243,0.15);
+
+      --font-main: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #0a1929;
+      --bg-secondary: #102a43;
+      --bg-card: #15314b;
+      --bg-hero: linear-gradient(135deg, #0a1929 0%, #0f2035 50%, #152d45 100%);
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border-color: #1e3a5f;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 14px rgba(0,0,0,0.4);
+      --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
+      --card-hover-shadow: 0 8px 25px rgba(56,189,248,0.15);
+    }
+
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ===== Theme Toggle ===== */
+    .theme-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 1000;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: var(--navy-800);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all var(--transition);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-md);
+    }
+    .theme-toggle:hover { transform: scale(1.1); }
+    .theme-toggle:active { transform: scale(0.95); }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: var(--bg-hero);
+      padding: 80px 0 60px;
+      position: relative;
+      overflow: hidden;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -30%;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-content { max-width: 560px; }
+
+    /* Logo */
+    .logo-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .logo-icon {
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+    }
+    .logo-text {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .hero .tagline {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* CTA Buttons */
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      font-size: 17px;
+      font-weight: 700;
+      border-radius: 60px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--blue-500), var(--cyan-400));
+      color: #fff;
+      transition: all var(--transition);
+      box-shadow: 0 4px 20px rgba(33,150,243,0.4);
+      min-width: 260px;
+      justify-content: center;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(33,150,243,0.5);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 30px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    /* Phone Mockup */
+    .phone-mockup {
+      width: 240px;
+      flex-shrink: 0;
+    }
+
+    /* ===== Section Common ===== */
+    .section {
+      padding: 72px 0;
+    }
+    .section-title {
+      text-align: center;
+      font-size: clamp(1.4rem, 4vw, 1.9rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 15px;
+      max-width: 500px;
+      margin: 0 auto 44px;
+    }
+
+    /* ===== Features Grid ===== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: all var(--transition);
+      cursor: default;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--card-hover-shadow);
+      border-color: var(--blue-400);
+    }
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, rgba(33,150,243,0.12), rgba(56,189,248,0.12));
+      color: var(--cyan-400);
+    }
+    [data-theme="dark"] .feature-icon {
+      background: linear-gradient(135deg, rgba(33,150,243,0.2), rgba(56,189,248,0.15));
+    }
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ===== Screenshots placeholder ===== */
+    .screenshots { background: var(--bg-secondary); }
+    .screenshot-scroll {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding: 4px 0 20px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .screenshot-scroll::-webkit-scrollbar { height: 6px; }
+    .screenshot-scroll::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
+    .screenshot-placeholder {
+      flex: 0 0 200px;
+      height: 360px;
+      border-radius: var(--radius);
+      border: 2px dashed var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      gap: 8px;
+      scroll-snap-align: center;
+      background: var(--bg-card);
+      transition: border-color var(--transition);
+    }
+    .screenshot-placeholder:hover { border-color: var(--blue-400); }
+    .screenshot-placeholder svg { opacity: 0.4; }
+
+    /* ===== Installation Steps ===== */
+    .install-section { background: var(--bg-secondary); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      counter-reset: step;
+    }
+    .step {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 28px 22px;
+      text-align: center;
+      position: relative;
+      transition: all var(--transition);
+      counter-increment: step;
+    }
+    .step:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue-500), var(--cyan-400));
+      color: #fff;
+      font-weight: 800;
+      font-size: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .step h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+    .step p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ===== Notice ===== */
+    .notice-box {
+      background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(251,146,60,0.08));
+      border: 1px solid rgba(251,191,36,0.3);
+      border-left: 4px solid #f59e0b;
+      border-radius: var(--radius-sm);
+      padding: 22px 24px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    [data-theme="dark"] .notice-box {
+      background: rgba(251,191,36,0.06);
+      border-color: rgba(251,191,36,0.2);
+    }
+    .notice-box h3 {
+      color: #f59e0b;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .notice-box p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .notice-box strong { color: var(--text-primary); }
+
+    /* ===== FAQ ===== */
+    .faq-list {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: all var(--transition);
+    }
+    .faq-item:hover { border-color: var(--blue-400); }
+    .faq-question {
+      width: 100%;
+      padding: 18px 22px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: left;
+      font-family: inherit;
+      line-height: 1.4;
+    }
+    .faq-question:focus-visible {
+      outline: 2px solid var(--blue-400);
+      outline-offset: -2px;
+    }
+    .faq-chevron {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      transition: transform var(--transition);
+      color: var(--text-muted);
+    }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 300px;
+    }
+    .faq-answer-inner {
+      padding: 0 22px 18px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ===== CTA Banner ===== */
+    .cta-banner {
+      background: var(--bg-hero);
+      padding: 60px 0;
+      text-align: center;
+    }
+    .cta-banner h2 {
+      color: #fff;
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .cta-banner p {
+      color: rgba(255,255,255,0.7);
+      font-size: 15px;
+      margin-bottom: 28px;
+    }
+
+    /* ===== Footer ===== */
+    .footer {
+      background: var(--navy-900);
+      padding: 36px 0;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .footer-logo svg { width: 32px; height: 32px; }
+    .footer-logo span {
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+    }
+    .footer p {
+      color: rgba(255,255,255,0.45);
+      font-size: 13px;
+    }
+    .footer a {
+      color: var(--cyan-400);
+      transition: color var(--transition);
+    }
+    .footer a:hover { color: var(--cyan-300); }
+
+    /* ===== Scroll Reveal ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== Responsive ===== */
+    @media (min-width: 768px) {
+      .hero-inner {
+        flex-direction: row;
+        text-align: left;
+        gap: 48px;
+      }
+      .hero-badges { justify-content: flex-start; }
+      .cta-group {
+        flex-direction: row;
+        align-items: center;
+      }
+      .phone-mockup { width: 280px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero { padding: 60px 0 48px; }
+      .phone-mockup { width: 200px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .btn-primary { width: 100%; }
+    }
+
+    /* ===== Smooth scroll offset for anchor links ===== */
+    :target { scroll-margin-top: 20px; }
+
+    /* ===== Accessibility ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Chuyển chế độ sáng/tối" title="Chế độ sáng/tối">
+    <span id="themeIcon">🌙</span>
+  </button>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="logo-wrapper">
+            <!-- Logo SVG -->
+            <svg class="logo-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="32" cy="32" r="30" fill="#102a43"/>
+              <circle cx="32" cy="32" r="30" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.3"/>
+              <text x="32" y="41" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="24" fill="#38bdf8">TN</text>
+            </svg>
+            <span class="logo-text">TN-001</span>
+          </div>
+
+          <h1>Máy tính khoa học<br>đa năng cho Android</h1>
+          <p class="tagline">Từ phép tính đơn giản đến giải phương trình, vẽ đồ thị, ma trận – tất cả trong một ứng dụng nhỏ gọn, hoàn toàn miễn phí.</p>
+
+          <div class="hero-badges">
+            <span class="badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+              Android 7.0+
+            </span>
+            <span class="badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              ~25 MB
+            </span>
+            <span class="badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Miễn phí
+            </span>
+          </div>
+
+          <div class="cta-group">
+            <a href="https://github.com/nguyenshack/tn-calculator-app/releases/download/latest/TN-Calculator.apk" class="btn-primary" aria-label="Tải file APK cho Android">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Tải APK cho Android
+            </a>
+            <a href="https://github.com/nguyenshack/tn-calculator-app/releases/tag/latest" class="btn-secondary" target="_blank" rel="noopener">
+              Xem các phiên bản
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Phone Mockup SVG -->
+        <div class="phone-mockup" aria-hidden="true">
+          <svg viewBox="0 0 260 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Phone body -->
+            <rect x="10" y="10" width="240" height="500" rx="36" fill="#1a2332" stroke="#2d4a6a" stroke-width="2"/>
+            <!-- Screen -->
+            <rect x="22" y="50" width="216" height="410" rx="4" fill="#0f2035"/>
+            <!-- Notch -->
+            <rect x="90" y="16" width="80" height="24" rx="12" fill="#0f2035"/>
+            <!-- Screen content: calculator UI mockup -->
+            <!-- Display area -->
+            <rect x="32" y="62" width="196" height="80" rx="8" fill="#0a1929"/>
+            <text x="218" y="100" text-anchor="end" font-family="monospace" font-size="28" fill="#38bdf8">2x²+3x−5</text>
+            <text x="218" y="128" text-anchor="end" font-family="monospace" font-size="16" fill="rgba(255,255,255,0.4)">= (2x+5)(x−1)</text>
+            <!-- Button grid -->
+            <g fill="#1e3a5f" font-family="Arial,sans-serif" font-size="13" text-anchor="middle">
+              <!-- Row 1 -->
+              <rect x="32" y="155" width="42" height="36" rx="8"/><text x="53" y="178" fill="#38bdf8">sin</text>
+              <rect x="80" y="155" width="42" height="36" rx="8"/><text x="101" y="178" fill="#38bdf8">cos</text>
+              <rect x="128" y="155" width="42" height="36" rx="8"/><text x="149" y="178" fill="#38bdf8">tan</text>
+              <rect x="176" y="155" width="52" height="36" rx="8" fill="#234e72"/><text x="202" y="178" fill="#67e8f9">DEL</text>
+              <!-- Row 2 -->
+              <rect x="32" y="198" width="42" height="36" rx="8"/><text x="53" y="221" fill="#38bdf8">x²</text>
+              <rect x="80" y="198" width="42" height="36" rx="8"/><text x="101" y="221" fill="#38bdf8">√</text>
+              <rect x="128" y="198" width="42" height="36" rx="8"/><text x="149" y="221" fill="#38bdf8">log</text>
+              <rect x="176" y="198" width="52" height="36" rx="8"/><text x="202" y="221" fill="#38bdf8">π</text>
+              <!-- Row 3 -->
+              <rect x="32" y="241" width="42" height="36" rx="8" fill="#15314b"/><text x="53" y="264" fill="#e2e8f0">7</text>
+              <rect x="80" y="241" width="42" height="36" rx="8" fill="#15314b"/><text x="101" y="264" fill="#e2e8f0">8</text>
+              <rect x="128" y="241" width="42" height="36" rx="8" fill="#15314b"/><text x="149" y="264" fill="#e2e8f0">9</text>
+              <rect x="176" y="241" width="52" height="36" rx="8" fill="#234e72"/><text x="202" y="264" fill="#67e8f9">÷</text>
+              <!-- Row 4 -->
+              <rect x="32" y="284" width="42" height="36" rx="8" fill="#15314b"/><text x="53" y="307" fill="#e2e8f0">4</text>
+              <rect x="80" y="284" width="42" height="36" rx="8" fill="#15314b"/><text x="101" y="307" fill="#e2e8f0">5</text>
+              <rect x="128" y="284" width="42" height="36" rx="8" fill="#15314b"/><text x="149" y="307" fill="#e2e8f0">6</text>
+              <rect x="176" y="284" width="52" height="36" rx="8" fill="#234e72"/><text x="202" y="307" fill="#67e8f9">×</text>
+              <!-- Row 5 -->
+              <rect x="32" y="327" width="42" height="36" rx="8" fill="#15314b"/><text x="53" y="350" fill="#e2e8f0">1</text>
+              <rect x="80" y="327" width="42" height="36" rx="8" fill="#15314b"/><text x="101" y="350" fill="#e2e8f0">2</text>
+              <rect x="128" y="327" width="42" height="36" rx="8" fill="#15314b"/><text x="149" y="350" fill="#e2e8f0">3</text>
+              <rect x="176" y="327" width="52" height="36" rx="8" fill="#234e72"/><text x="202" y="350" fill="#67e8f9">−</text>
+              <!-- Row 6 -->
+              <rect x="32" y="370" width="42" height="36" rx="8" fill="#15314b"/><text x="53" y="393" fill="#e2e8f0">0</text>
+              <rect x="80" y="370" width="42" height="36" rx="8" fill="#15314b"/><text x="101" y="393" fill="#e2e8f0">.</text>
+              <rect x="128" y="370" width="42" height="36" rx="8" fill="#2196f3"/><text x="149" y="393" fill="#fff" font-weight="bold">=</text>
+              <rect x="176" y="370" width="52" height="36" rx="8" fill="#234e72"/><text x="202" y="393" fill="#67e8f9">+</text>
+            </g>
+            <!-- Graph hint -->
+            <path d="M38 430 Q80 415 130 440 T220 420" stroke="#38bdf8" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+            <!-- Home indicator -->
+            <rect x="100" y="474" width="60" height="5" rx="2.5" fill="#2d4a6a"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FEATURES ========== -->
+  <section class="section" id="features">
+    <div class="container">
+      <h2 class="section-title reveal">Tính năng nổi bật</h2>
+      <p class="section-subtitle reveal">Mọi công cụ toán học bạn cần, gói gọn trong một ứng dụng</p>
+
+      <div class="features-grid">
+        <!-- 1 -->
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+          </div>
+          <h3>Tính toán khoa học</h3>
+          <p>Hiển thị toán học tự nhiên: phân số, căn bậc n, lũy thừa – giống hệt viết trên giấy.</p>
+        </div>
+        <!-- 2 -->
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><text x="12" y="14" text-anchor="middle" font-size="8" fill="currentColor" stroke="none">fx</text></svg>
+          </div>
+          <h3>Giải phương trình</h3>
+          <p>Giải phương trình, bất phương trình, phân tích đa thức thành nhân tử tự động.</p>
+        </div>
+        <!-- 3 -->
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </div>
+          <h3>Ma trận & Số phức</h3>
+          <p>Phép toán ma trận, vector và số phức – phục vụ học tập và nghiên cứu.</p>
+        </div>
+        <!-- 4 -->
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+          </div>
+          <h3>Thống kê & Xác suất</h3>
+          <p>Phân phối xác suất, phân tích thống kê mô tả và suy diễn đầy đủ.</p>
+        </div>
+        <!-- 5 -->
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3>Vẽ đồ thị</h3>
+          <p>Vẽ đồ thị hàm số trực quan, hỗ trợ zoom và dò điểm trên đồ thị.</p>
+        </div>
+        <!-- 6 -->
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 10h16"/><path d="M10 4v16"/></svg>
+          </div>
+          <h3>Bảng tính Spreadsheet</h3>
+          <p>Bảng tính ngay trên máy tính bỏ túi – nhập dữ liệu, tính công thức hàng loạt.</p>
+        </div>
+        <!-- 7 -->
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="10" fill="currentColor" stroke="none">He</text></svg>
+          </div>
+          <h3>Bảng tuần hoàn</h3>
+          <p>Tra cứu nhanh bảng tuần hoàn nguyên tố hóa học với đầy đủ thông tin.</p>
+        </div>
+        <!-- 8 -->
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </div>
+          <h3>Trợ lý TN AI</h3>
+          <p>Hỗ trợ giải toán bằng AI – hỏi bài, giải thích bước, gợi ý cách làm.</p>
+        </div>
+        <!-- 9 -->
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20"/><path d="M5 20V8l7-5 7 5v12"/><path d="M9 20v-4h6v4"/><text x="12" y="15" text-anchor="middle" font-size="7" fill="currentColor" stroke="none">$</text></svg>
+          </div>
+          <h3>Đổi đơn vị & Tài chính</h3>
+          <p>Hệ cơ số, đổi đơn vị đo lường, tính lãi suất, BMI, ngày giờ, tỉ lệ.</p>
+        </div>
+        <!-- 10 -->
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </div>
+          <h3>Hướng dẫn dùng nhanh</h3>
+          <p>Có hướng dẫn tích hợp ngay trong app, phù hợp cho người mới bắt đầu.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SCREENSHOTS ========== -->
+  <section class="section screenshots" id="screenshots">
+    <div class="container">
+      <h2 class="section-title reveal">Ảnh chụp màn hình</h2>
+      <p class="section-subtitle reveal">Vuốt ngang để xem thêm</p>
+      <div class="screenshot-scroll reveal">
+        <div class="screenshot-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          Ảnh 1 – Giao diện chính
+        </div>
+        <div class="screenshot-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          Ảnh 2 – Giải phương trình
+        </div>
+        <div class="screenshot-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          Ảnh 3 – Vẽ đồ thị
+        </div>
+        <div class="screenshot-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          Ảnh 4 – Ma trận
+        </div>
+        <div class="screenshot-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          Ảnh 5 – Trợ lý TN AI
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== INSTALLATION ========== -->
+  <section class="section install-section" id="install">
+    <div class="container">
+      <h2 class="section-title reveal">Cách cài đặt</h2>
+      <p class="section-subtitle reveal">Chỉ 4 bước đơn giản để bắt đầu sử dụng</p>
+
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-number">1</div>
+          <h3>Tải file APK</h3>
+          <p>Nhấn nút <strong>"Tải APK cho Android"</strong> ở trên để tải file cài đặt về máy.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-number">2</div>
+          <h3>Mở file APK</h3>
+          <p>Vào thư mục <strong>Tải xuống</strong> (Downloads) trên điện thoại, nhấn vào file vừa tải.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-number">3</div>
+          <h3>Cho phép cài đặt</h3>
+          <p>Nếu được hỏi, bật <strong>"Cho phép cài từ nguồn không xác định"</strong> cho trình duyệt hoặc trình quản lý file.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-number">4</div>
+          <h3>Cài đặt & Mở app</h3>
+          <p>Nhấn <strong>Cài đặt</strong>, đợi vài giây rồi nhấn <strong>Mở</strong> để sử dụng.</p>
+        </div>
+      </div>
+
+      <!-- Notice -->
+      <div style="margin-top: 36px;">
+        <div class="notice-box reveal">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Lưu ý quan trọng
+          </h3>
+          <p>
+            Nếu máy bạn đã cài bản TN-001 cũ được ký bằng <strong>chữ ký số khác</strong> (ví dụ bản từ nguồn khác), bạn cần <strong>gỡ bản cũ trước</strong> khi cài bản mới. Việc gỡ cài đặt sẽ <strong>xóa toàn bộ dữ liệu cũ</strong> (lịch sử tính toán, biến đã lưu…). Hãy sao lưu nếu cần trước khi gỡ.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FAQ ========== -->
+  <section class="section" id="faq">
+    <div class="container">
+      <h2 class="section-title reveal">Câu hỏi thường gặp</h2>
+      <p class="section-subtitle reveal">Giải đáp nhanh những thắc mắc phổ biến</p>
+
+      <div class="faq-list">
+        <div class="faq-item reveal">
+          <button class="faq-question" aria-expanded="false">
+            App có miễn phí không?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              Có! TN-001 Calculator hoàn toàn miễn phí, không có quảng cáo và không yêu cầu mua thêm bất kỳ tính năng nào. Bạn được dùng tất cả chức năng ngay sau khi cài đặt.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-question" aria-expanded="false">
+            Tải file APK có an toàn không?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              File APK được phân phối trực tiếp từ GitHub Releases của nhà phát triển. Mã nguồn minh bạch, file được ký điện tử để đảm bảo tính toàn vẹn. Bạn có thể yên tâm tải và cài đặt.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-question" aria-expanded="false">
+            Vì sao cần cho phép "nguồn không xác định"?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              Android mặc định chỉ cho phép cài app từ Google Play. Vì TN-001 được phân phối qua file APK (ngoài Play Store), bạn cần bật tùy chọn này một lần cho trình duyệt hoặc trình quản lý file mà bạn dùng để mở file APK. Đây là thiết lập bình thường và an toàn.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item reveal">
+          <button class="faq-question" aria-expanded="false">
+            Gặp lỗi "gói xung đột" hoặc "chữ ký không khớp" thì làm sao?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">
+              Lỗi này xảy ra khi máy bạn đã có sẵn bản TN-001 cũ được ký bằng chữ ký số khác. Cách xử lý:<br><br>
+              <strong>1.</strong> Vào <em>Cài đặt → Ứng dụng → TN-001 Calculator → Gỡ cài đặt</em>.<br>
+              <strong>2.</strong> Sau khi gỡ xong, cài lại file APK mới vừa tải.<br><br>
+              ⚠️ Lưu ý: việc gỡ cài đặt sẽ xóa dữ liệu cũ của app (lịch sử tính toán, biến…). Hãy sao lưu trước nếu cần.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA BANNER ========== -->
+  <section class="cta-banner">
+    <div class="container reveal">
+      <h2>Sẵn sàng để tính toán?</h2>
+      <p>Tải TN-001 Calculator ngay – hoàn toàn miễn phí, không quảng cáo.</p>
+      <a href="https://github.com/nguyenshack/tn-calculator-app/releases/download/latest/TN-Calculator.apk" class="btn-primary">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Tải APK cho Android
+      </a>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="32" cy="32" r="30" fill="#102a43"/>
+            <text x="32" y="41" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="24" fill="#38bdf8">TN</text>
+          </svg>
+          <span>TN-001 Calculator</span>
+        </div>
+        <p>Phát triển bởi <strong style="color:rgba(255,255,255,0.7);">TN Developer</strong></p>
+        <p>Liên hệ: <a href="mailto:contact@example.com">contact@example.com</a></p>
+        <p style="margin-top: 8px;">© 2024–2026 TN-001 Calculator. Đã đăng ký bản quyền.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== JAVASCRIPT ========== -->
+  <script>
+    // === Theme Toggle ===
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    function setTheme(dark) {
+      html.setAttribute('data-theme', dark ? 'dark' : 'light');
+      themeIcon.textContent = dark ? '☀️' : '🌙';
+      try { localStorage.setItem('tn-theme', dark ? 'dark' : 'light'); } catch(e) {}
+    }
+
+    // Init: prefer saved, then system, default light
+    (function() {
+      let saved;
+      try { saved = localStorage.getItem('tn-theme'); } catch(e) {}
+      if (saved) {
+        setTheme(saved === 'dark');
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setTheme(true);
+      } else {
+        setTheme(false);
+      }
+    })();
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      setTheme(!isDark);
+    });
+
+    // System theme change
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      let saved;
+      try { saved = localStorage.getItem('tn-theme'); } catch(e2) {}
+      if (!saved) setTheme(e.matches);
+    });
+
+    // === FAQ Accordion ===
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const isOpen = item.classList.contains('open');
+
+        // Close all
+        document.querySelectorAll('.faq-item.open').forEach(openItem => {
+          openItem.classList.remove('open');
+          openItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        });
+
+        // Toggle current
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    // === Scroll Reveal ===
+    const revealElements = document.querySelectorAll('.reveal');
+
+    function checkReveal() {
+      const windowHeight = window.innerHeight;
+      revealElements.forEach(el => {
+        const top = el.getBoundingClientRect().top;
+        if (top < windowHeight - 60) {
+          el.classList.add('visible');
+        }
+      });
+    }
+
+    // Use IntersectionObserver for performance
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      revealElements.forEach(el => observer.observe(el));
+    } else {
+      // Fallback
+      window.addEventListener('scroll', checkReveal, { passive: true });
+      checkReveal();
+    }
+
+    // === Stagger animation for grid items ===
+    document.querySelectorAll('.features-grid .feature-card, .steps .step').forEach((card, i) => {
+      card.style.transitionDelay = `${i * 0.07}s`;
+    });
+  </script>
+</body>
+</html>
