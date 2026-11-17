@@ -624,7 +624,7 @@
             </span>
             <span class="badge">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              ~25 MB
+              ~4 MB
             </span>
             <span class="badge">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -633,9 +633,9 @@
           </div>
 
           <div class="cta-group">
-            <a href="https://github.com/nguyenshack/tn-calculator-app/releases/download/latest/TN-Calculator.apk" class="btn-primary" aria-label="Tải file APK cho Android">
+            <a href="https://github.com/nguyenshack/tn-calculator-app/releases/download/latest/TN-001-Calculator.zip" class="btn-primary" aria-label="Tải mã nguồn ứng dụng">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Tải APK cho Android
+              Tải ứng dụng (.zip)
             </a>
             <a href="https://github.com/nguyenshack/tn-calculator-app/releases/tag/latest" class="btn-secondary" target="_blank" rel="noopener">
               Xem các phiên bản
@@ -831,23 +831,23 @@
       <div class="steps">
         <div class="step reveal">
           <div class="step-number">1</div>
-          <h3>Tải file APK</h3>
-          <p>Nhấn nút <strong>"Tải APK cho Android"</strong> ở trên để tải file cài đặt về máy.</p>
+          <h3>Tải file ZIP</h3>
+          <p>Nhấn nút <strong>"Tải ứng dụng (.zip)"</strong> ở trên để tải file về máy tính.</p>
         </div>
         <div class="step reveal">
           <div class="step-number">2</div>
-          <h3>Mở file APK</h3>
-          <p>Vào thư mục <strong>Tải xuống</strong> (Downloads) trên điện thoại, nhấn vào file vừa tải.</p>
+          <h3>Giải nén</h3>
+          <p>Giải nén file ZIP vừa tải. Bên trong là <strong>mã nguồn dự án Android</strong> (Kotlin + Gradle).</p>
         </div>
         <div class="step reveal">
           <div class="step-number">3</div>
-          <h3>Cho phép cài đặt</h3>
-          <p>Nếu được hỏi, bật <strong>"Cho phép cài từ nguồn không xác định"</strong> cho trình duyệt hoặc trình quản lý file.</p>
+          <h3>Mở bằng Android Studio</h3>
+          <p>Mở thư mục đã giải nén bằng <strong>Android Studio</strong>. Chờ Gradle sync hoàn tất.</p>
         </div>
         <div class="step reveal">
           <div class="step-number">4</div>
-          <h3>Cài đặt & Mở app</h3>
-          <p>Nhấn <strong>Cài đặt</strong>, đợi vài giây rồi nhấn <strong>Mở</strong> để sử dụng.</p>
+          <h3>Build & Cài đặt</h3>
+          <p>Nhấn <strong>Run ▶</strong> để build APK và cài trực tiếp lên điện thoại qua USB hoặc tạo file APK.</p>
         </div>
       </div>
 
@@ -859,7 +859,7 @@
             Lưu ý quan trọng
           </h3>
           <p>
-            Nếu máy bạn đã cài bản TN-001 cũ được ký bằng <strong>chữ ký số khác</strong> (ví dụ bản từ nguồn khác), bạn cần <strong>gỡ bản cũ trước</strong> khi cài bản mới. Việc gỡ cài đặt sẽ <strong>xóa toàn bộ dữ liệu cũ</strong> (lịch sử tính toán, biến đã lưu…). Hãy sao lưu nếu cần trước khi gỡ.
+            Nếu máy bạn đã cài bản TN-001 cũ được ký bằng <strong>chữ ký số khác</strong> (ví dụ bản từ nguồn khác), bạn cần <strong>gỡ bản cũ trước</strong> khi cài bản mới. Việc gỡ cài đặt sẽ <strong>xóa toàn bộ dữ liệu cũ</strong> (lịch sử tính toán, biến đã lưu…). Hãy sao lưu nếu cần trước khi gỡ. Để build từ mã nguồn, bạn cần cài <strong>Android Studio</strong> và <strong>JDK 17+</strong>.
           </p>
         </div>
       </div>
@@ -892,7 +892,7 @@
           </button>
           <div class="faq-answer">
             <div class="faq-answer-inner">
-              File APK được phân phối trực tiếp từ GitHub Releases của nhà phát triển. Mã nguồn minh bạch, file được ký điện tử để đảm bảo tính toàn vẹn. Bạn có thể yên tâm tải và cài đặt.
+              File ZIP được phân phối trực tiếp từ GitHub Releases của nhà phát triển. Mã nguồn hoàn toàn mở, bạn có thể kiểm tra toàn bộ code trước khi build. File được ký điện tử để đảm bảo tính toàn vẹn.
             </div>
           </div>
         </div>
@@ -932,9 +932,9 @@
     <div class="container reveal">
       <h2>Sẵn sàng để tính toán?</h2>
       <p>Tải TN-001 Calculator ngay – hoàn toàn miễn phí, không quảng cáo.</p>
-      <a href="https://github.com/nguyenshack/tn-calculator-app/releases/download/latest/TN-Calculator.apk" class="btn-primary">
+      <a href="https://github.com/nguyenshack/tn-calculator-app/releases/download/latest/TN-001-Calculator.zip" class="btn-primary">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Tải APK cho Android
+        Tải ứng dụng (.zip)
       </a>
     </div>
   </section>
